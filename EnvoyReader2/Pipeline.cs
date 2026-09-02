@@ -33,20 +33,15 @@ internal class Pipeline : IPipeline
         }
 
         var netFreqTask = ReadNetFrequency(cancellationToken);
-        await ReadInverterData(cancellationToken).ContinueWith(async (antecedent) =>
+        var inverterData = await ReadInverterData(cancellationToken);
+
+        if (inverterData == null)
         {
-            var inverterData = antecedent.Result;
-
-            if (inverterData == null)
-            {
-                logger.LogInformation("No inverter data to write");
-                return;
-            }
-
-            var netFreq = await netFreqTask;
-
-            await WriteOutput(inverterData.Value, netFreq, cancellationToken);
-        }, TaskContinuationOptions.OnlyOnRanToCompletion).Unwrap();
+            logger.LogInformation("No inverter data to write");
+            return;
+        }
+        var netFreq = await netFreqTask;
+        await WriteOutput(inverterData.Value, netFreq, cancellationToken);
 
         stopwatch.Stop();
         logger.LogInformation("All finished at {Now} in {Elapsed}", clock.Now, stopwatch.Elapsed);

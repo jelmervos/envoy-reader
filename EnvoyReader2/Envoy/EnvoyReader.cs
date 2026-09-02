@@ -104,7 +104,7 @@ internal sealed class EnvoyReader : IInverterDataReader
         var temperature = Convert.ToDecimal(inverters.Where(i => i.Communicating).Average(i => i.Temp));
         var timeStamp = new DateTimeOffset(Convert.ToInt64(inverters.Where(i => i.ReportDate > DateTimeOffset.MinValue && i.Communicating).Average(i => i.ReportDate.UtcTicks)), TimeSpan.Zero);
 
-        inverterData = inverterData.WithDetailedInverterData(voltage, temperature);
+        inverterData = inverterData.WithDetailedInverterData(voltage, temperature, timeStamp);
 
         return inverterData;
     }
