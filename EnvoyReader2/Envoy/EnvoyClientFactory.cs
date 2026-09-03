@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using NEnvoy;
 using NEnvoy.Models;
+using System.Net;
 
 internal class EnvoyClientFactory : IEnvoyClientFactory
 {
@@ -38,9 +39,13 @@ internal class EnvoyClientFactory : IEnvoyClientFactory
                 var info = await client.GetHomeAsync(cancellationToken);
                 return client;
             }
-            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            catch (Refit.ApiRequestException ex) when (ex.InnerException is HttpRequestException)
             {
-                logger.LogInformation("Unauthorized, try getting new token");
+                var httpRequestException = ex.InnerException as HttpRequestException;
+                if (httpRequestException?.StatusCode == HttpStatusCode.Unauthorized)
+                    logger.LogInformation("Unauthorized, try getting new token");
+                else
+                    throw;
             }
         }
 
