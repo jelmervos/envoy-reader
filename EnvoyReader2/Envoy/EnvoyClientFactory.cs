@@ -51,6 +51,12 @@ internal class EnvoyClientFactory : IEnvoyClientFactory
 
         logger.LogInformation("Use login");
         client = await EnvoyClient.FromLoginAsync(connectionInfo, cancellationToken).ConfigureAwait(false);
+        var tokenFileDirectory = Path.GetDirectoryName(tokenFile);
+        if (!string.IsNullOrEmpty(tokenFileDirectory))
+        {
+            logger.LogInformation("Create directory {TokenFileDirectory}", tokenFileDirectory);
+            Directory.CreateDirectory(tokenFileDirectory);
+        }
         await File.WriteAllTextAsync(tokenFile, client.GetToken(), cancellationToken).ConfigureAwait(false);
         return client;
     }
