@@ -1,15 +1,13 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 internal static class SettingsServiceExtenstions
 {
-    public static IServiceCollection AddApplicationOptions(this IServiceCollection services, HostBuilderContext hostContext)
+    public static IServiceCollection AddApplicationOptions(this IServiceCollection services)
     {
-        services.AddOptions<EnvoyClientSettings>().Bind(hostContext.Configuration.GetRequiredSection(ConfigSections.EnvoyClient));
-        services.AddOptions<PvOutputSettings>().Bind(hostContext.Configuration.GetRequiredSection(ConfigSections.PvOutput));
-        services.AddOptions<SystemLocationSettings>().Bind(hostContext.Configuration.GetSection(ConfigSections.SystemLocation));
-        services.AddOptions<HomeAssistantSettings>().Bind(hostContext.Configuration.GetSection(ConfigSections.HomeAssistant));
+        services.AddOptions<EnvoyClientSettings>().BindConfiguration(ConfigSections.EnvoyClient);
+        services.AddOptions<PvOutputSettings>().BindConfiguration(ConfigSections.PvOutput);
+        services.AddOptions<SystemLocationSettings>().BindConfiguration(ConfigSections.SystemLocation);
+        services.AddOptions<HomeAssistantSettings>().BindConfiguration(ConfigSections.HomeAssistant);
 
         return services;
     }

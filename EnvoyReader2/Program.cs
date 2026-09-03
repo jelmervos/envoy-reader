@@ -7,7 +7,7 @@ using var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddLogging(builder => builder.AddConsole())
-            .AddApplicationOptions(hostContext)
+            .AddApplicationOptions()
             .AddSingleton<IClock, Clock>()
             .AddSingleton<ISunriseSunset, SunriseSunset>()
             .AddSingleton<IEnvoyClientFactory, EnvoyClientFactory>()
