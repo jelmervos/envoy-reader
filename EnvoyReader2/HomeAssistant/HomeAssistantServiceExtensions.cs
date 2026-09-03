@@ -8,9 +8,9 @@ internal static class HomeAssistantServiceExtensions
     {
         var provider = services.BuildServiceProvider();
         var homeAssistantSettings = provider.GetRequiredService<IOptions<HomeAssistantSettings>>();
-        services.AddRefitClient<IHomeAssistantApi>(new RefitSettings
+        services.AddRefitGeneratedClient<IHomeAssistantApi>(new RefitSettings
         {
-            AuthorizationHeaderValueGetter = (request, cancelToken) => Task.FromResult(homeAssistantSettings.Value.Token)
+            AuthorizationHeaderValueGetter = (request, cancelToken) => ValueTask.FromResult(homeAssistantSettings.Value.Token)
         }).ConfigureHttpClient(c => c.BaseAddress = new Uri(homeAssistantSettings.Value.Address));
 
         return services;
