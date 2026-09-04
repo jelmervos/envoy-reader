@@ -17,7 +17,7 @@ internal class EnvoyReaderService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var interval = TimeSpan.FromMinutes(settings.PipelineIntervalInMinutes);
+        var interval = TimeSpan.FromMinutes(Math.Max(settings.PipelineIntervalInMinutes, 2));
         while (!stoppingToken.IsCancellationRequested)
         {
             try

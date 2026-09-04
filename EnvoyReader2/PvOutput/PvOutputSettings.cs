@@ -1,5 +1,8 @@
-﻿internal record PvOutputSettings
+﻿using System.ComponentModel.DataAnnotations;
+
+internal class PvOutputSettings
 {
-    public required string ApiKey { get; init; }
-    public int SystemId { get; init; }
+    [Required(AllowEmptyStrings = false)]
+    public required string ApiKey { get; set; }
+    public int SystemId { get; set; }
 }

@@ -1,7 +1,13 @@
-﻿internal record EnvoyClientSettings
+﻿using System.ComponentModel.DataAnnotations;
+
+internal class EnvoyClientSettings
 {
-    public required string Host { get; init; }
-    public required string Username { get; init; }
-    public required string Password { get; init; }
-    public required string TokenFile { get; init; }
+    [Required(AllowEmptyStrings = false)]
+    public required string Host { get; set; }
+    [Required(AllowEmptyStrings = false)]
+    public required string Username { get; set; }
+    [Required(AllowEmptyStrings = false)]
+    public required string Password { get; set; }
+    [Required(AllowEmptyStrings = false)]
+    public required string TokenFile { get; set; }
 }

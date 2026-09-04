@@ -19,7 +19,7 @@ RUN dotnet publish "./EnvoyReader2/EnvoyReader2.csproj" \
     /p:UseAppHost=false \
     /p:PublishReadyToRun=false
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
+FROM mcr.microsoft.com/dotnet/runtime:10.0-alpine
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 RUN apk add --no-cache icu-libs tzdata

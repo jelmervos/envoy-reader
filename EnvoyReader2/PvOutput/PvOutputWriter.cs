@@ -34,7 +34,8 @@ internal class PvOutputWriter : IOutputWriter
             .SetTemperatureIfNotNull(data.Temperature)
             .Build();
 
-        logger.LogInformation("Add status for system Id: {SystemId}", pvOutputClient.OwnedSystemId);
+        logger.LogInformation("Add status for system Id: {SystemId}, timestamp: {Timestamp}",
+            pvOutputClient.OwnedSystemId, status.Timestamp);
 
         // Push the status back to PVOutput
         var response = await pvOutputClient.Status.AddStatusAsync(status);

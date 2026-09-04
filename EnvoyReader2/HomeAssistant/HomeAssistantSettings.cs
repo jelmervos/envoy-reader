@@ -1,6 +1,6 @@
-﻿internal record HomeAssistantSettings
+﻿internal class HomeAssistantSettings
 {
-    public required string Token { get; init; }
-    public required string Address { get; init; }
-    public required string NetFreqEntityId { get; init; }
+    public required string Token { get; set; }
+    public required string Address { get; set; }
+    public required string NetFreqEntityId { get; set; }
 }

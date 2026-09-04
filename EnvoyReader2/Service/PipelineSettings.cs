@@ -1,4 +1,7 @@
-﻿internal record ServiceSettings
+﻿using System.ComponentModel.DataAnnotations;
+
+internal class ServiceSettings
 {
-    public required int PipelineIntervalInMinutes { get; init; }
+    [property: Range(2, 60)]
+    public required int PipelineIntervalInMinutes { get; set; }
 }
