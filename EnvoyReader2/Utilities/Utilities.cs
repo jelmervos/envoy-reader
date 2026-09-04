@@ -5,8 +5,8 @@ internal static class Utilities
     public static string GetStartupFolder()
     {
         return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ??
-            Path.GetDirectoryName(Environment.ProcessPath) ?? 
-            throw new Exception("Could not find startup path");
+            Path.GetDirectoryName(Environment.ProcessPath) ??
+            AppContext.BaseDirectory;
     }
 
     public static string FullPath(string file)

@@ -10,7 +10,7 @@ internal class Pipeline : IPipeline
     private readonly IEnumerable<IOutputWriter> writers;
     private readonly IClock clock;
 
-    public Pipeline(ILogger<Pipeline> logger, ISunriseSunset sunriseSunset,  IInverterDataReader reader, INetFrequencyReader netFrequencyReader,
+    public Pipeline(ILogger<Pipeline> logger, ISunriseSunset sunriseSunset, IInverterDataReader reader, INetFrequencyReader netFrequencyReader,
         IEnumerable<IOutputWriter> writers, IClock clock)
     {
         this.logger = logger;
@@ -49,9 +49,10 @@ internal class Pipeline : IPipeline
 
     private async Task WriteOutput(InverterData inverterData, float? netFrequency, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Write data to {Count} writer(s): {inverterData}, net freqency: {netFrequency}", writers.Count(), inverterData, netFrequency);
+        var writerList = writers.ToArray();
+        logger.LogInformation("Write data to {Count} writer(s): {inverterData}, net freqency: {netFrequency}", writerList.Length, inverterData, netFrequency);
         var stopwatch = Stopwatch.StartNew();
-        await Parallel.ForEachAsync(writers, cancellationToken, async (writer, token) => await writer.Write(inverterData, netFrequency));
+        await Parallel.ForEachAsync(writerList, cancellationToken, async (writer, token) => await writer.Write(inverterData, netFrequency));
         stopwatch.Stop();
         logger.LogInformation("Finished writing in {Elapsed}", stopwatch.Elapsed);
     }
