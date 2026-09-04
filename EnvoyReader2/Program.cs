@@ -16,9 +16,9 @@ using var host = Host.CreateDefaultBuilder(args)
             .AddTransient<INetFrequencyReader, HomeAssistant>()
             .AddTransient<IInverterDataReader, EnvoyReader>()
             .AddTransient<IOutputWriter, PvOutputWriter>()
-            .AddTransient<IPipeline, Pipeline>();
+            .AddTransient<IPipeline, Pipeline>()
+            .AddHostedService<EnvoyReaderService>();
     })
     .Build();
 
-var pipeline = host.Services.GetRequiredService<IPipeline>();
-await pipeline.Start();
+await host.RunAsync();

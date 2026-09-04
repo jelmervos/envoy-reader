@@ -8,6 +8,7 @@ internal static class SettingsServiceExtenstions
         services.AddOptions<PvOutputSettings>().BindConfiguration(ConfigSections.PvOutput);
         services.AddOptions<SystemLocationSettings>().BindConfiguration(ConfigSections.SystemLocation);
         services.AddOptions<HomeAssistantSettings>().BindConfiguration(ConfigSections.HomeAssistant);
+        services.AddOptions<ServiceSettings>().BindConfiguration(ConfigSections.Service);
 
         return services;
     }

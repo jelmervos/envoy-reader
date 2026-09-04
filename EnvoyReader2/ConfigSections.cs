@@ -4,4 +4,5 @@
     public const string PvOutput = "PVOutput";
     public const string SystemLocation = "SystemLocation";
     public const string HomeAssistant = "HomeAssistant";
+    public const string Service = "Service";
 }
