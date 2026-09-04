@@ -1,31 +1,32 @@
-﻿# Stage 1: Build
-FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+﻿FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+ARG BUILD_CONFIGURATION=Release
+ARG RUNTIME=linux-musl-x64
 WORKDIR /src
 
 COPY ["EnvoyReader2/EnvoyReader2.csproj", "EnvoyReader2/"]
 COPY ["nuget.config", "./"]
 COPY ["Packages/", "./Packages/"]
 
-RUN dotnet restore "EnvoyReader2/EnvoyReader2.csproj" -r linux-musl-x64
+RUN dotnet restore "./EnvoyReader2/EnvoyReader2.csproj" -r "$RUNTIME" /p:PublishReadyToRun=false
 
 COPY . .
-RUN dotnet publish "EnvoyReader2/EnvoyReader2.csproj" \
-    -c Release \
-    -r linux-musl-x64 \
-    --self-contained true \
+RUN dotnet publish "./EnvoyReader2/EnvoyReader2.csproj" \
+    -c "$BUILD_CONFIGURATION" \
+    -r "$RUNTIME" \
+    --self-contained false \
+    --no-restore \
     -o /app/publish \
-    --no-restore
+    /p:UseAppHost=false \
+    /p:PublishReadyToRun=false
 
-# Stage 2: Runtime (Alpine)
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS final
-WORKDIR /app
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine
 
-RUN apk add --no-cache icu-libs
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+RUN apk add --no-cache icu-libs tzdata
+
+WORKDIR /app
+USER app
+VOLUME /app/data
 
 COPY --from=build /app/publish .
-
-RUN mkdir -p /app/data && chown -R app:app /app/data
-USER app
-
-ENTRYPOINT ["./EnvoyReader2"]
+ENTRYPOINT ["dotnet", "EnvoyReader2.dll"]
