@@ -1,12 +1,8 @@
-﻿using System.Reflection;
-
-internal static class Utilities
+﻿internal static class Utilities
 {
     public static string GetStartupFolder()
     {
-        return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ??
-            Path.GetDirectoryName(Environment.ProcessPath) ??
-            AppContext.BaseDirectory;
+        return Path.GetDirectoryName(Environment.ProcessPath) ?? AppContext.BaseDirectory;
     }
 
     public static string FullPath(string file)

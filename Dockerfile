@@ -1,32 +1,25 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
-ARG BUILD_CONFIGURATION=Release
-ARG RUNTIME=linux-musl-x64
-WORKDIR /src
+﻿# syntax=docker/dockerfile:1
+FROM mcr.microsoft.com/dotnet/sdk:10.0-noble-aot AS build
+WORKDIR /source
 
-COPY ["EnvoyReader2/EnvoyReader2.csproj", "EnvoyReader2/"]
-COPY ["nuget.config", "./"]
-COPY ["Packages/", "./Packages/"]
+COPY --link ["EnvoyReader2/", "EnvoyReader2/"]
+COPY --link ["nuget.config", "./"]
+COPY --link ["Packages/", "./Packages/"]
 
-RUN dotnet restore "./EnvoyReader2/EnvoyReader2.csproj" -r "$RUNTIME" /p:PublishReadyToRun=false
+RUN --mount=type=cache,target=/root/.nuget \
+    --mount=type=cache,target=/source/bin \
+    --mount=type=cache,target=/source/obj \
+    dotnet publish EnvoyReader2/EnvoyReader2.csproj \
+        -o /app \
+        -c Release \
+        && rm /app/*.dbg
 
-COPY . .
-RUN dotnet publish "./EnvoyReader2/EnvoyReader2.csproj" \
-    -c "$BUILD_CONFIGURATION" \
-    -r "$RUNTIME" \
-    --self-contained false \
-    --no-restore \
-    -o /app/publish \
-    /p:UseAppHost=false \
-    /p:PublishReadyToRun=false
+RUN mkdir -p /app/data && chown -R $APP_UID:$APP_UID /app/data
 
-FROM mcr.microsoft.com/dotnet/runtime:10.0-alpine
-
-ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-RUN apk add --no-cache icu-libs tzdata
-
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-noble-chiseled-extra
 WORKDIR /app
-USER app
+COPY --link --from=build /app .
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+USER $APP_UID
 VOLUME /app/data
-
-COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "EnvoyReader2.dll"]
+ENTRYPOINT ["./EnvoyReader2"]
