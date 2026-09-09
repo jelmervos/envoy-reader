@@ -18,7 +18,7 @@ RUN mkdir -p /app/data && chown -R $APP_UID:$APP_UID /app/data
 
 FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-noble-chiseled-extra
 WORKDIR /app
-COPY --link --from=build /app .
+COPY --link --from=build --chown=$APP_UID:$APP_UID /app .
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 USER $APP_UID
 VOLUME /app/data
