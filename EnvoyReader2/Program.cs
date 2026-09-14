@@ -3,6 +3,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+if (HealthCheckHelper.TryGetHealthCheckFileFromArgs(args, out var healthCheckFile))
+{
+    if (string.IsNullOrWhiteSpace(healthCheckFile))
+    {
+        Console.WriteLine("Health check file path is empty");
+        return 1;
+    }
+    return HealthCheckHelper.RunHealthCheck(healthCheckFile);
+}
+
 using var host = Host.CreateDefaultBuilder(args)
     .UseContentRoot(Utilities.GetStartupFolder())
     .ConfigureServices((hostContext, services) =>
@@ -36,3 +46,4 @@ using var host = Host.CreateDefaultBuilder(args)
     .Build();
 
 await host.RunAsync();
+return 0;
