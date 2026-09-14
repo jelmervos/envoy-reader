@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-internal class EnvoyClientSettings
+internal sealed class EnvoyClientSettings
 {
     [Required(AllowEmptyStrings = false)]
     public required string Host { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-internal class PvOutputSettings
+internal sealed class PvOutputSettings
 {
     [Required(AllowEmptyStrings = false)]
     public required string ApiKey { get; set; }

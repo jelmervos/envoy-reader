@@ -1,4 +1,4 @@
-﻿internal class HomeAssistantSettings
+﻿internal sealed class HomeAssistantSettings
 {
     public required string Token { get; set; }
     public required string Address { get; set; }
