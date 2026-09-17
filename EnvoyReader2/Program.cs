@@ -2,34 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.CommandLine;
 
-if (HealthCheckHelper.TryGetHealthCheckFileFromArgs(args, out var healthCheckFile))
-{
-    if (string.IsNullOrWhiteSpace(healthCheckFile))
-    {
-        Console.WriteLine("Health check file path is empty");
-        return 1;
-    }
-    return HealthCheckHelper.RunHealthCheck(healthCheckFile);
-}
-
-using var host = Host.CreateDefaultBuilder(args)
+var hostBuilder = Host.CreateDefaultBuilder(args)
     .UseContentRoot(Utilities.GetStartupFolder())
-    .ConfigureServices((hostContext, services) =>
-    {
-        services.AddLogging(builder => builder.AddConsole())
-            .AddApplicationOptions()
-            .AddSingleton<IClock, Clock>()
-            .AddSingleton<ISunriseSunset, SunriseSunset>()
-            .AddSingleton<IEnvoyClientFactory, EnvoyClientFactory>()
-            .AddPvOutputClient()
-            .AddHomeAssistantApi()
-            .AddTransient<INetFrequencyReader, HomeAssistant>()
-            .AddTransient<IInverterDataReader, EnvoyReader>()
-            .AddTransient<IOutputWriter, PvOutputWriter>()
-            .AddTransient<IPipeline, Pipeline>()
-            .AddHostedService<EnvoyReaderService>();
-    })
     .ConfigureAppConfiguration((hostingContext, config) =>
     {
         var env = hostingContext.HostingEnvironment;
@@ -43,7 +19,22 @@ using var host = Host.CreateDefaultBuilder(args)
             config.AddUserSecrets<Program>();
         }
     })
-    .Build();
+    .ConfigureServices((hostContext, services) =>
+    {
+        services.AddLogging(builder => builder.AddConsole())
+            .AddSingleton<IClock, Clock>();
+    });
 
+
+var rootCommand = new RootCommand();
+rootCommand.SetAction((parseResult) => EnvoyReaderServiceConfigurator.ConfigureServices(hostBuilder));
+
+var healthcheckCommand = new Command("healthcheck");
+healthcheckCommand.SetAction((parseResult) => HealthcheckServiceConfigurator.ConfigureServices(hostBuilder));
+rootCommand.Subcommands.Add(healthcheckCommand);
+
+rootCommand.Parse(args).Invoke();
+
+using var host = hostBuilder.Build();
 await host.RunAsync();
-return 0;
+

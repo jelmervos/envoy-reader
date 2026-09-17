@@ -5,6 +5,14 @@ using System.Text.Json;
 
 internal static class HomeAssistantServiceExtensions
 {
+    public static IServiceCollection AddHomeAssistantOptions(this IServiceCollection services)
+    {
+        services.AddOptions<HomeAssistantSettings>()
+                .BindConfiguration(ConfigSections.HomeAssistant);
+
+        return services;
+    }
+
     public static IServiceCollection AddHomeAssistantApi(this IServiceCollection services)
     {
         var provider = services.BuildServiceProvider();

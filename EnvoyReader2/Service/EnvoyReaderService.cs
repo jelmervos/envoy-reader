@@ -6,27 +6,28 @@ internal class EnvoyReaderService : BackgroundService
 {
     private readonly ILogger<EnvoyReaderService> logger;
     private readonly IPipeline pipeline;
-    private readonly ServiceSettings settings;
-    private readonly IClock clock;
+    private readonly IOptions<ServiceSettings> serviceSettings;
+    private readonly IHealthcheckWriter healthcheckWriter;
 
-    public EnvoyReaderService(ILogger<EnvoyReaderService> logger, IPipeline pipeline, IOptions<ServiceSettings> settings, IClock clock)
+    public EnvoyReaderService(ILogger<EnvoyReaderService> logger, IPipeline pipeline, IOptions<ServiceSettings> serviceSettings,
+        IHealthcheckWriter healthcheckWriter)
     {
         this.logger = logger;
         this.pipeline = pipeline;
-        this.settings = settings.Value;
-        this.clock = clock;
+        this.serviceSettings = serviceSettings;
+        this.healthcheckWriter = healthcheckWriter;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await Healthy();
-        var interval = TimeSpan.FromMinutes(Math.Max(settings.PipelineIntervalInMinutes, 2));
+        await healthcheckWriter.Healthy();
+        var interval = TimeSpan.FromMinutes(Math.Max(serviceSettings.Value.PipelineIntervalInMinutes, 2));
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
                 await pipeline.Start(stoppingToken);
-                await Healthy();
+                await healthcheckWriter.Healthy();
             }
             catch (OperationCanceledException)
             {
@@ -35,7 +36,7 @@ internal class EnvoyReaderService : BackgroundService
             catch (Exception ex)
             {
                 logger.LogError(ex, "Pipeline exception");
-                Unhealthy();
+                healthcheckWriter.Unhealthy();
             }
 
             try
@@ -47,42 +48,6 @@ internal class EnvoyReaderService : BackgroundService
             {
                 return;
             }
-        }
-    }
-
-    private async Task Healthy()
-    {
-        var file = settings.HealthCheckFile;
-        if (string.IsNullOrWhiteSpace(file))
-        {
-            return;
-        }   
-
-        try
-        {
-            await File.WriteAllTextAsync(file, clock.Now.ToString("o"));
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Exception occurred while writing health check file");
-        }
-    }
-
-    private void Unhealthy()
-    {
-        var file = settings.HealthCheckFile;
-        if (string.IsNullOrWhiteSpace(file))
-        {
-            return;
-        }
-
-        try
-        {
-            File.Delete(file);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Exception occurred while deleting health check file");
         }
     }
 }

@@ -5,4 +5,5 @@
     public const string SystemLocation = "SystemLocation";
     public const string HomeAssistant = "HomeAssistant";
     public const string Service = "Service";
+    public const string Healthcheck = "Healthcheck";
 }
