@@ -31,17 +31,16 @@ internal class EnvoyClientFactory : IEnvoyClientFactory
 
         if (File.Exists(tokenFile))
         {
-            logger.LogInformation("Use token");
+            logger.LogInformation("Use token from file");
             var token = await File.ReadAllTextAsync(tokenFile, cancellationToken).ConfigureAwait(false);
             client = EnvoyClient.FromToken(token, connectionInfo);
             try
             {
-                var info = await client.GetHomeAsync(cancellationToken);
+                var info = await client.GetHomeAsync(cancellationToken).ConfigureAwait(false);
                 return client;
             }
-            catch (Refit.ApiRequestException ex) when (ex.InnerException is HttpRequestException)
+            catch (Refit.ApiRequestException ex) when (ex.InnerException is HttpRequestException httpRequestException)
             {
-                var httpRequestException = ex.InnerException as HttpRequestException;
                 if (httpRequestException?.StatusCode == HttpStatusCode.Unauthorized)
                     logger.LogInformation("Unauthorized, try getting new token");
                 else

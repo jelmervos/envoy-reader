@@ -1,18 +1,10 @@
 ﻿internal static class Utilities
 {
-    public static string GetStartupFolder()
-    {
-        return Path.GetDirectoryName(Environment.ProcessPath) ?? AppContext.BaseDirectory;
-    }
+    public static string GetStartupFolder() =>
+        Path.GetDirectoryName(Environment.ProcessPath) ?? AppContext.BaseDirectory;
 
-    public static string FullPath(string file)
-    {
-        if (Path.IsPathRooted(file))
-        {
-            return file;
-        }
-        return Path.GetFullPath(file, GetStartupFolder());
-    }
+    public static string FullPath(string file) =>
+        Path.GetFullPath(file, GetStartupFolder());
 
     public static bool IsExpired(DateTimeOffset now, DateTimeOffset then, TimeSpan expiration)
     {

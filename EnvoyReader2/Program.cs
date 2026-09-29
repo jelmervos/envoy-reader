@@ -21,6 +21,7 @@ var hostBuilder = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((hostContext, services) =>
     {
+        //Default service configuration for all application services
         services.AddLogging(builder => builder.AddConsole())
             .AddSingleton<IClock, Clock>();
     });

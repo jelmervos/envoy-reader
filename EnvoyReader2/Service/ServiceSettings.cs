@@ -3,5 +3,5 @@
 internal sealed class ServiceSettings
 {
     [property: Range(2, 60)]
-    public int PipelineIntervalInMinutes { get; set; }
+    public int AggregatorIntervalInMinutes { get; set; }
 }

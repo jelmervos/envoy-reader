@@ -19,10 +19,11 @@ internal static class EnvoyReaderServiceConfigurator
                 .AddSingleton<IHealthcheckWriter, HealthcheckWriter>()
                 .AddPvOutputClient()
                 .AddHomeAssistantApi()
+                .AddTransient<IInputReaders, InputReaders>()
                 .AddTransient<INetFrequencyReader, HomeAssistant>()
                 .AddTransient<IInverterDataReader, EnvoyReader>()
                 .AddTransient<IOutputWriter, PvOutputWriter>()
-                .AddTransient<IPipeline, Pipeline>()
+                .AddTransient<IAggregator, Aggregator>()
                 .AddHostedService<EnvoyReaderService>();
         });
     }
