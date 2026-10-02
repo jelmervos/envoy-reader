@@ -17,7 +17,6 @@ internal static class EnvoyReaderServiceConfigurator
                 .AddSingleton<ISunriseSunset, SunriseSunset>()
                 .AddSingleton<IEnvoyClientFactory, EnvoyClientFactory>()
                 .AddSingleton<IHealthcheckWriter, HealthcheckWriter>()
-                .AddPvOutputClient()
                 .AddHomeAssistantApi()
                 .AddTransient<IInputReaders, InputReaders>()
                 .AddTransient<INetFrequencyReader, HomeAssistant>()

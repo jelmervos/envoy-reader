@@ -10,6 +10,7 @@ RUN --mount=type=cache,target=/root/.nuget \
     --mount=type=cache,target=/source/bin \
     --mount=type=cache,target=/source/obj \
     dotnet publish EnvoyReader2/EnvoyReader2.csproj \
+        -r linux-x64 \
         -o /app \
         -c Release \
         && rm /app/*.dbg
