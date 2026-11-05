@@ -13,6 +13,7 @@ internal static class EnvoyReaderServiceConfigurator
                 .AddHealthcheckOptions()
                 .AddSunriseSunsetOptions()
                 .AddPvOutputOptions()
+                .AddPvOutputClient()
                 .AddHomeAssistantOptions()
                 .AddSingleton<ISunriseSunset, SunriseSunset>()
                 .AddSingleton<IEnvoyClientFactory, EnvoyClientFactory>()

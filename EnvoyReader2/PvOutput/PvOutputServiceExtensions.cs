@@ -8,11 +8,24 @@ internal partial class ValidatePvOutputSettings : IValidateOptions<PvOutputSetti
 
 internal static class PvOutputServiceExtensions
 {
+    private const string PvOutputBaseAddress = "https://pvoutput.org/";
+
     public static IServiceCollection AddPvOutputOptions(this IServiceCollection services)
     {
         services.AddOptions<PvOutputSettings>()
                 .BindConfiguration(ConfigSections.PvOutput);
         services.AddSingleton<IValidateOptions<PvOutputSettings>, ValidatePvOutputSettings>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddPvOutputClient(this IServiceCollection services)
+    {
+        services.AddHttpClient<PvOutputWriter>(client =>
+        {
+            client.BaseAddress = new Uri(PvOutputBaseAddress);
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
 
         return services;
     }

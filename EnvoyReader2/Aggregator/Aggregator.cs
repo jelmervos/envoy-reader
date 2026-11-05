@@ -50,7 +50,8 @@ internal class Aggregator : IAggregator
     {
         logger.LogInformation("Write data to {Count} writer(s): {inverterData}, net freqency: {netFrequency}", writers.Count, inverterData, netFrequency);
         var stopwatch = Stopwatch.StartNew();
-        await Parallel.ForEachAsync(writers, cancellationToken, async (writer, token) => await writer.Write(inverterData, netFrequency));
+        await Parallel.ForEachAsync(writers, cancellationToken, async (writer, token) =>
+            await writer.Write(inverterData, netFrequency, token));
         stopwatch.Stop();
         logger.LogInformation("Finished writing in {Elapsed}", stopwatch.Elapsed);
     }
