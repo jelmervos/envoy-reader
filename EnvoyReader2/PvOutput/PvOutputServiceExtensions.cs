@@ -21,7 +21,7 @@ internal static class PvOutputServiceExtensions
 
     public static IServiceCollection AddPvOutputClient(this IServiceCollection services)
     {
-        services.AddHttpClient<PvOutputWriter>(client =>
+        services.AddHttpClient<IOutputWriter, PvOutputWriter>(client =>
         {
             client.BaseAddress = new Uri(PvOutputBaseAddress);
             client.Timeout = TimeSpan.FromSeconds(30);
@@ -29,4 +29,4 @@ internal static class PvOutputServiceExtensions
 
         return services;
     }
-}
+}   

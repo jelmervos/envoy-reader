@@ -22,7 +22,6 @@ internal static class EnvoyReaderServiceConfigurator
                 .AddTransient<IInputReaders, InputReaders>()
                 .AddTransient<INetFrequencyReader, HomeAssistant>()
                 .AddTransient<IInverterDataReader, EnvoyReader>()
-                .AddTransient<IOutputWriter, PvOutputWriter>()
                 .AddTransient<IAggregator, Aggregator>()
                 .AddHostedService<EnvoyReaderService>();
         });
