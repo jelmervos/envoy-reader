@@ -22,7 +22,6 @@ RUN mkdir -p /app/data && chown -R $APP_UID:$APP_UID /app/data
 FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-noble-chiseled
 WORKDIR /app
 
-# Kopieer de tijdzones vanuit de build-container naar de chiseled runtime
 COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
 
 COPY --link --from=build --chown=$APP_UID:$APP_UID /app .
